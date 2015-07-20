@@ -5,7 +5,6 @@ import java.io.File;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
@@ -34,8 +33,8 @@ public class GetImageDialog extends Dialog
 	private Activity mActivity;
 	private int mAspectX = 1; // 剪裁框宽的权重
 	private int mAspectY = 1; // 剪裁框高的权重
-	private int mOutputX = 192; // 输出图像的宽
-	private int mOutputY = 192; // 输出图像的高
+	private int mOutputX = 255; // 输出图像的宽
+	private int mOutputY = 255; // 输出图像的高
 	private File mTempFile; // 存储图像的临时路径
 	private String mImageName = "image"; // 图像名称
 
@@ -127,9 +126,7 @@ public class GetImageDialog extends Dialog
 			// 从相册返回的数据
 			if (data != null)
 			{
-				String path = getPicPath(data);
-				mImageName = path.substring(path.lastIndexOf("/") + 1);
-				crop(Uri.fromFile(new File(path)));
+				crop(data.getData());
 			}
 		}
 		if (requestCode == REQUEST_CAREMA)
@@ -226,25 +223,5 @@ public class GetImageDialog extends Dialog
 		{
 			return false;
 		}
-	}
-
-	/**
-	 * 获取图片地址
-	 * 
-	 * @param intent
-	 * @return
-	 */
-	public String getPicPath(Intent intent)
-	{
-		Uri selectedImage = intent.getData();
-		String[] filePathColumns =
-		{ MediaStore.Images.Media.DATA };
-		Cursor c = mActivity.getContentResolver().query(selectedImage,
-				filePathColumns, null, null, null);
-		c.moveToFirst();
-		int columnIndex = c.getColumnIndex(filePathColumns[0]);
-		String picturePath = c.getString(columnIndex);
-		c.close();
-		return picturePath;
 	}
 }
