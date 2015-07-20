@@ -24,6 +24,8 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		mBtn = (ImageButton) findViewById(R.id.btn);
 		mDialog = new GetImageDialog(this);
+        // 设置圆形图像
+//		mDialog.setCircleImage(true);
 		mBtn.setOnClickListener(new OnClickListener()
 		{
 
@@ -45,7 +47,7 @@ public class MainActivity extends Activity
 		Bitmap bitmap = mDialog.getBitmap(requestCode, resultCode, data);
 		if (null != bitmap)
 		{
-			mBtn.setBackground(new BitmapDrawable(bitmap));
+			mBtn.setBackgroundDrawable(new BitmapDrawable(bitmap));
 		}
 	}
 

@@ -6,6 +6,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Bitmap.Config;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -36,6 +41,7 @@ public class GetImageDialog extends Dialog
 	private int mOutputY = 250; // 输出图像的高
 	private File mTempFile; // 存储图像的临时路径
 	private String mImageName = "image.jpg"; // 图像名称
+	private boolean mIsCircleImage; // 是否为圆形图像
 
 	public GetImageDialog(Activity activity)
 	{
@@ -155,6 +161,13 @@ public class GetImageDialog extends Dialog
 				mTempFile = null;
 			}
 		}
+		if (null != bitmap)
+		{
+			if (mIsCircleImage)
+			{
+				bitmap = createCircleImage(bitmap);
+			}
+		}
 		return bitmap;
 	}
 
@@ -206,7 +219,17 @@ public class GetImageDialog extends Dialog
 		mOutputY = height;
 	}
 
-	/*
+	/**
+	 * 设置是否为圆形图像
+	 * 
+	 * @param isCircleImage
+	 */
+	public void setCircleImage(boolean isCircleImage)
+	{
+		mIsCircleImage = isCircleImage;
+	}
+
+	/**
 	 * 判断sdcard是否被挂载
 	 */
 	private boolean hasSdcard()
@@ -219,5 +242,38 @@ public class GetImageDialog extends Dialog
 		{
 			return false;
 		}
+	}
+
+	/**
+	 * 根据原图和变长绘制圆形图片
+	 * 
+	 * @param source
+	 * @param min
+	 * @return
+	 */
+	private static Bitmap createCircleImage(Bitmap source)
+	{
+		int min = source.getWidth();
+		final Paint paint = new Paint();
+		// 抗锯齿
+		paint.setAntiAlias(true);
+		Bitmap target = Bitmap.createBitmap(min, min, Config.ARGB_8888);
+		/**
+		 * 产生一个同样大小的画布
+		 */
+		Canvas canvas = new Canvas(target);
+		/**
+		 * 首先绘制圆形
+		 */
+		canvas.drawCircle(min / 2, min / 2, min / 2, paint);
+		/**
+		 * 使用SRC_IN
+		 */
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+		/**
+		 * 绘制图片
+		 */
+		canvas.drawBitmap(source, 0, 0, paint);
+		return target;
 	}
 }
