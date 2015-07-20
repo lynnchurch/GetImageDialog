@@ -9,7 +9,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -33,10 +32,10 @@ public class GetImageDialog extends Dialog
 	private Activity mActivity;
 	private int mAspectX = 1; // 剪裁框宽的权重
 	private int mAspectY = 1; // 剪裁框高的权重
-	private int mOutputX = 255; // 输出图像的宽
-	private int mOutputY = 255; // 输出图像的高
+	private int mOutputX = 250; // 输出图像的宽
+	private int mOutputY = 250; // 输出图像的高
 	private File mTempFile; // 存储图像的临时路径
-	private String mImageName = "image"; // 图像名称
+	private String mImageName = "image.jpg"; // 图像名称
 
 	public GetImageDialog(Activity activity)
 	{
@@ -94,13 +93,14 @@ public class GetImageDialog extends Dialog
 				if (hasSdcard())
 				{
 					mTempFile = new File(
-							Environment.getExternalStorageDirectory(),
-							mImageName);
+							Environment.getExternalStorageDirectory()
+									+ "/image", mImageName);
 					// 从文件中创建uri
 					Uri uri = Uri.fromFile(mTempFile);
 					intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+					mActivity.startActivityForResult(intent, REQUEST_CAREMA);
 				}
-				mActivity.startActivityForResult(intent, REQUEST_CAREMA);
+
 			} else if (id == R.id.btn_gallery)
 			{
 				Intent intent = new Intent(
@@ -117,6 +117,7 @@ public class GetImageDialog extends Dialog
 
 	public Bitmap getBitmap(int requestCode, int resultCode, Intent data)
 	{
+		Bitmap bitmap = null;
 		if (Activity.RESULT_OK != resultCode)
 		{
 			return null;
@@ -146,20 +147,15 @@ public class GetImageDialog extends Dialog
 			// 从剪切图片返回的数据
 			if (data != null)
 			{
-				Bitmap bitmap = data.getParcelableExtra("data");
-				return bitmap;
+				bitmap = data.getParcelableExtra("data");
 			}
-			try
+			if (null != mTempFile)
 			{
-				// 将临时文件删除
-				if (null != mTempFile)
-					mTempFile.delete();
-			} catch (Exception e)
-			{
-				Log.e("Exception", e.getMessage());
+				mTempFile.delete();
+				mTempFile = null;
 			}
 		}
-		return null;
+		return bitmap;
 	}
 
 	/*
