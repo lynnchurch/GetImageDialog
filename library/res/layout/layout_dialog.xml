@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="10dp"
+    android:background="#0000"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btn_camera"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gallery_selector"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:text="拍照"
+        android:textColor="@color/text_color_btn"
+        android:textSize="18sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#CAC9CB" />
+
+    <Button
+        android:id="@+id/btn_gallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/camera_selector"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:text="从相册中选择"
+        android:textColor="@color/text_color_btn"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:background="@drawable/cancel_selector"
+        android:paddingBottom="10dip"
+        android:paddingTop="10dip"
+        android:text="取消"
+        android:textColor="@color/text_color_btn"
+        android:textSize="18sp" />
+
+</LinearLayout>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="text_color_btn">#007AFF</color>
+    <color name="bg_dialog">#DFFF</color>
+    <color name="bg_btn_pressed">#CACACB</color>
+
+</resources>
