@@ -12,24 +12,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/gallery_selector"
-        android:paddingBottom="10dip"
-        android:paddingTop="10dip"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:text="拍照"
         android:textColor="@color/text_color_btn"
         android:textSize="18sp" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="#CAC9CB" />
 
     <Button
         android:id="@+id/btn_gallery"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
         android:background="@drawable/camera_selector"
-        android:paddingBottom="10dip"
-        android:paddingTop="10dip"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:text="从相册中选择"
         android:textColor="@color/text_color_btn"
         android:textSize="18sp" />
@@ -38,10 +34,10 @@
         android:id="@+id/btn_cancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dip"
+        android:layout_marginTop="10dp"
         android:background="@drawable/cancel_selector"
-        android:paddingBottom="10dip"
-        android:paddingTop="10dip"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
         android:text="取消"
         android:textColor="@color/text_color_btn"
         android:textSize="18sp" />

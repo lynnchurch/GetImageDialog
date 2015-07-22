@@ -68,7 +68,7 @@ public class GetImageDialog extends Dialog
 	{
 		if (0 == mLayoutResID)
 		{
-			mLayoutResID = R.layout.layout_dialog;
+			mLayoutResID = R.layout.layout_getimage_dialog;
 		}
 		LayoutInflater inflater = LayoutInflater.from(mActivity);
 		View v = inflater.inflate(mLayoutResID, null);
