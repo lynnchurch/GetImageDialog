@@ -248,7 +248,6 @@ public class GetImageDialog extends Dialog
 	 * 根据原图和变长绘制圆形图片
 	 * 
 	 * @param source
-	 * @param min
 	 * @return
 	 */
 	private static Bitmap createCircleImage(Bitmap source)
