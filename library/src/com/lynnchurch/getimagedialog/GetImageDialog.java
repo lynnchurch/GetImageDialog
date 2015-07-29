@@ -278,10 +278,15 @@ public class GetImageDialog extends Dialog
 		int drawY = 0; // 位图绘制y坐标
 		if (null != rect)
 		{
-			cropW = rect.width()-5;
+			cropW = rect.width() - 1;
+			/*
+			 * 当对小图缩小剪裁的时候，bitmap中实际图像的尺寸小于bitmap的尺寸，
+			 * 为避免进行圆形剪裁出现问题，所以得对canvas的大小进行调整
+			 */
 			if (cropW < 160)
 			{
 				canvasW = cropW;
+				// 调整绘制坐标，使bitmap中的图像恰好绘制在canvas中
 				drawX = (cropW - width) / 2;
 				drawY = drawX;
 			}
