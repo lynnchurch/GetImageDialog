@@ -32,9 +32,9 @@ import android.widget.Toast;
  */
 public class GetImageDialog extends Dialog
 {
-	private static final int REQUEST_CAREMA = 1; // 拍照
-	private static final int REQUEST_GALLERY = 2; // 从相册中选择
-	private static final int REQUEST_CROP = 3; // 剪裁
+	public static final int REQUEST_CAREMA = 1; // 拍照
+	public static final int REQUEST_GALLERY = 2; // 从相册中选择
+	public static final int REQUEST_CROP = 3; // 剪裁
 
 	private int mLayoutResID;
 	private Activity mActivity;
