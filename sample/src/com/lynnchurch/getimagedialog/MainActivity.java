@@ -3,18 +3,18 @@ package com.lynnchurch.getimagedialog;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.lynnchurch.alertdialogdemo.R;
 import com.lynnchurch.getimagedialog.GetImageDialog;
 
 public class MainActivity extends Activity
 {
-	private ImageButton mBtn;
+	private ImageView mBtn;
 	private GetImageDialog mDialog;
 
 	@Override
@@ -22,7 +22,7 @@ public class MainActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mBtn = (ImageButton) findViewById(R.id.btn);
+		mBtn = (ImageView) findViewById(R.id.btn);
 		mDialog = new GetImageDialog(this);
 		// 设置输出圆形框图像，考虑到头像有时要用
 		mDialog.setCircleImage(true);
@@ -51,7 +51,7 @@ public class MainActivity extends Activity
 		Bitmap bitmap = mDialog.getBitmap(requestCode, resultCode, data);
 		if (null != bitmap)
 		{
-			mBtn.setBackgroundDrawable(new BitmapDrawable(bitmap));
+			mBtn.setImageBitmap(bitmap);
 		}
 	}
 

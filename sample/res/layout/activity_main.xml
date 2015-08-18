@@ -7,12 +7,13 @@
     tools:context="com.lynnchurch.getimagedialog.MainActivity"
     tools:ignore="MergeRootFrame" >
 
-    <ImageButton
+    <ImageView
         android:id="@+id/btn"
-        android:layout_width="160dp"
-        android:layout_height="160dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerInParent="true"
-        android:background="@drawable/image" />
+        android:src="@drawable/image"
+        android:clickable="true" />
 
     <TextView
         android:layout_width="wrap_content"
