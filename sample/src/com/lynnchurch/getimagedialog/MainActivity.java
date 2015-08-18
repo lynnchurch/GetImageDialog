@@ -24,8 +24,12 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		mBtn = (ImageButton) findViewById(R.id.btn);
 		mDialog = new GetImageDialog(this);
-        // 设置圆形图像
-//		mDialog.setCircleImage(true);
+		// 设置输出圆形框图像，考虑到头像有时要用
+		mDialog.setCircleImage(true);
+		// 设置剪裁比例
+//		mDialog.setCropRatio(1, 1);
+		// 设置输出图像的尺寸大小
+//		mDialog.setOutputImageSize(144, 144);
 		mBtn.setOnClickListener(new OnClickListener()
 		{
 

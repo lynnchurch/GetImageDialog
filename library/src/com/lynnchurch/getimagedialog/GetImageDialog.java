@@ -128,6 +128,14 @@ public class GetImageDialog extends Dialog
 		}
 	};
 
+	/**
+	 * 获取Bitmap,在onActivityResult()方法中使用
+	 * 
+	 * @param requestCode
+	 * @param resultCode
+	 * @param data
+	 * @return
+	 */
 	public Bitmap getBitmap(int requestCode, int resultCode, Intent data)
 	{
 		Bitmap bitmap = null;
