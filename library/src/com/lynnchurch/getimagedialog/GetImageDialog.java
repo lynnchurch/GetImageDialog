@@ -82,7 +82,7 @@ public class GetImageDialog extends Dialog
 		gallery.setOnClickListener(mListener);
 		cancel.setOnClickListener(mListener);
 		// 设置对话框的视图
-		LayoutParams params = new LayoutParams(550, LayoutParams.WRAP_CONTENT);
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		setContentView(v, params);
 	}
 
@@ -120,22 +120,10 @@ public class GetImageDialog extends Dialog
 						Intent.ACTION_PICK,
 						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
 				mActivity.startActivityForResult(intent, REQUEST_GALLERY);
-			} else if (id == R.id.btn_cancel)
-			{
-			} else
-			{
 			}
 		}
 	};
 
-	/**
-	 * 获取Bitmap,在onActivityResult()方法中使用
-	 * 
-	 * @param requestCode
-	 * @param resultCode
-	 * @param data
-	 * @return
-	 */
 	public Bitmap getBitmap(int requestCode, int resultCode, Intent data)
 	{
 		Bitmap bitmap = null;
