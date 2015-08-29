@@ -1,7 +1,12 @@
 package com.lynnchurch.getimagedialog;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import com.lynnchurch.cropimage.CropImageActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -30,10 +35,12 @@ import android.widget.Toast;
  * @version 创建时间:2015年7月20日 下午3:28:00
  * 
  */
-public class GetImageDialog extends Dialog {
+public class GetImageDialog extends Dialog
+{
 	public static final int REQUEST_CAREMA = 1; // 拍照
 	public static final int REQUEST_GALLERY = 2; // 从相册中选择
 	public static final int REQUEST_CROP = 3; // 剪裁
+	public final String TEMP_PHOTO_FILE_NAME = "image.png"; // 图像名称
 
 	private int mLayoutResID;
 	private Activity mActivity;
@@ -42,20 +49,22 @@ public class GetImageDialog extends Dialog {
 	private int mOutputX = 144; // 输出图像的宽
 	private int mOutputY = 144; // 输出图像的高
 	private File mTempFile; // 存储图像的临时路径
-	private String mImageName = "image.jpg"; // 图像名称
 	private boolean mIsCircleImage; // 是否为圆形图像
 
-	public GetImageDialog(Activity activity) {
+	public GetImageDialog(Activity activity)
+	{
 		this(activity, 0, 0);
 		// TODO Auto-generated constructor stub
 	}
 
-	public GetImageDialog(Activity activity, int layoutResID) {
+	public GetImageDialog(Activity activity, int layoutResID)
+	{
 		this(activity, 0, layoutResID);
 		// TODO Auto-generated constructor stub
 	}
 
-	public GetImageDialog(Activity activity, int theme, int layoutResID) {
+	public GetImageDialog(Activity activity, int theme, int layoutResID)
+	{
 		super(activity, R.style.DialogStyle);
 		mActivity = activity;
 		mLayoutResID = layoutResID;
@@ -63,9 +72,20 @@ public class GetImageDialog extends Dialog {
 		// TODO Auto-generated constructor stub
 	}
 
-	private void init() {
-		if (0 == mLayoutResID) {
+	private void init()
+	{
+		if (0 == mLayoutResID)
+		{
 			mLayoutResID = R.layout.layout_getimage_dialog;
+		}
+		if (hasSdcard())
+		{
+			mTempFile = new File(Environment.getExternalStorageDirectory()
+					+ "/image", TEMP_PHOTO_FILE_NAME);
+		} else
+		{
+			mTempFile = new File(mActivity.getFilesDir() + "/image",
+					TEMP_PHOTO_FILE_NAME);
 		}
 		LayoutInflater inflater = LayoutInflater.from(mActivity);
 		View v = inflater.inflate(mLayoutResID, null);
@@ -81,30 +101,25 @@ public class GetImageDialog extends Dialog {
 		setContentView(v, params);
 	}
 
-	private View.OnClickListener mListener = new View.OnClickListener() {
+	private View.OnClickListener mListener = new View.OnClickListener()
+	{
 
 		@Override
-		public void onClick(View v) {
+		public void onClick(View v)
+		{
 			// TODO Auto-generated method stub
 			dismiss();
 			int id = v.getId();
-			// 判断存储卡是否可以用，可用进行存储
-			if (hasSdcard()) {
-				mTempFile = new File(Environment.getExternalStorageDirectory()
-						+ "/image", mImageName);
-			} else {
-				Toast.makeText(mActivity, "错误：未检测到SD卡", Toast.LENGTH_SHORT)
-						.show();
-				return;
-			}
-			if (id == R.id.btn_camera) {
+			if (id == R.id.btn_camera)
+			{
 				Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
 				// 从文件中创建uri
 				Uri uri = Uri.fromFile(mTempFile);
 				intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
 				mActivity.startActivityForResult(intent, REQUEST_CAREMA);
 
-			} else if (id == R.id.btn_gallery) {
+			} else if (id == R.id.btn_gallery)
+			{
 				Intent intent = new Intent(
 						Intent.ACTION_PICK,
 						android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -123,71 +138,107 @@ public class GetImageDialog extends Dialog {
 	 * @return
 	 */
 
-	public Bitmap getBitmap(int requestCode, int resultCode, Intent data) {
+	public Bitmap getBitmap(int requestCode, int resultCode, Intent data)
+	{
 		Bitmap bitmap = null;
 		Rect rect = null;
-		if (Activity.RESULT_OK != resultCode) {
+		if (Activity.RESULT_OK != resultCode)
+		{
 			return null;
 		}
-		if (requestCode == REQUEST_GALLERY) {
+		if (requestCode == REQUEST_GALLERY)
+		{
 			// 从相册返回的数据
-			if (data != null) {
-				crop(data.getData());
+			if (data != null)
+			{
+				try
+				{
+					InputStream inputStream = mActivity.getContentResolver()
+							.openInputStream(data.getData());
+					FileOutputStream fileOutputStream = new FileOutputStream(
+							mTempFile);
+					copyStream(inputStream, fileOutputStream);
+					fileOutputStream.close();
+					inputStream.close();
+				} catch (IOException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				crop();
 			}
 		}
-		if (requestCode == REQUEST_CAREMA) {
+		if (requestCode == REQUEST_CAREMA)
+		{
 			// 从相机返回的数据
-			if (hasSdcard()) {
-				crop(Uri.fromFile(mTempFile));
-			} else {
+			if (hasSdcard())
+			{
+				crop();
+			} else
+			{
 				Toast.makeText(mActivity, "未找到存储卡，无法存储照片！", Toast.LENGTH_SHORT)
 						.show();
 			}
 		}
-		if (requestCode == REQUEST_CROP) {
+		if (requestCode == REQUEST_CROP)
+		{
 			// 从剪切图片返回的数据
-			try {
-				bitmap = BitmapFactory.decodeStream(mActivity
-						.getContentResolver().openInputStream(
-								Uri.fromFile(mTempFile)));
-				rect = data.getParcelableExtra("cropped-rect");
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String path = data.getStringExtra(CropImageActivity.IMAGE_PATH);
+			if (path == null)
+			{
+
+				return bitmap;
 			}
-			if (null != mTempFile) {
+			if (null != mTempFile)
+			{
+				bitmap = BitmapFactory.decodeFile(mTempFile.getPath());
 				mTempFile.delete();
 				mTempFile = null;
 			}
-		}
-		if (null != bitmap) {
-			if (mIsCircleImage) {
-				bitmap = createCircleImage(bitmap, rect);
+			if(mIsCircleImage)
+			{
+				bitmap=createCircleImage(bitmap);
 			}
 		}
 		return bitmap;
 	}
 
+	public static void copyStream(InputStream input, OutputStream output)
+			throws IOException
+	{
+
+		byte[] buffer = new byte[1024];
+		int bytesRead;
+		while ((bytesRead = input.read(buffer)) != -1)
+		{
+			output.write(buffer, 0, bytesRead);
+		}
+	}
+
 	/*
-	 * 剪切图片
+	 * 剪裁图片
 	 */
-	private void crop(Uri uri) {
-		// 裁剪图片意图
-		Intent intent = new Intent("com.android.camera.action.CROP");
-		intent.setDataAndType(uri, "image/*");
-		intent.putExtra("crop", "true");
+	private void crop()
+	{
+
+		Intent intent = new Intent(mActivity, CropImageActivity.class);
+		intent.putExtra(CropImageActivity.IMAGE_PATH, mTempFile.getPath());
+		intent.putExtra(CropImageActivity.SCALE, true);
+		intent.putExtra(CropImageActivity.SCALE_UP_IF_NEEDED, true);
+
 		// 裁剪框的比例
-		intent.putExtra("aspectX", mAspectX);
-		intent.putExtra("aspectY", mAspectY);
+		intent.putExtra(CropImageActivity.ASPECT_X, mAspectX);
+		intent.putExtra(CropImageActivity.ASPECT_Y, mAspectY);
+
 		// 裁剪后输出图片的尺寸大小
-		intent.putExtra("outputX", mOutputX);
-		intent.putExtra("outputY", mOutputY);
-		intent.putExtra("scale", true);
-		intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());// 图片格式
-		intent.putExtra("noFaceDetection", true);// 取消人脸识别
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(mTempFile));
-		intent.putExtra("return-data", true);
+		intent.putExtra(CropImageActivity.OUTPUT_X, mOutputX);
+		intent.putExtra(CropImageActivity.OUTPUT_Y, mOutputY);
+
+		intent.putExtra(CropImageActivity.RETURN_DATA, true);
+
+		intent.putExtra(CropImageActivity.CIRCLE_CROP, mIsCircleImage);
 		mActivity.startActivityForResult(intent, REQUEST_CROP);
+
 	}
 
 	/**
@@ -198,7 +249,8 @@ public class GetImageDialog extends Dialog {
 	 * @param cropH
 	 *            高所占比
 	 */
-	public void setCropRatio(int cropW, int cropH) {
+	public void setCropRatio(int cropW, int cropH)
+	{
 		mAspectX = cropW;
 		mAspectY = cropH;
 	}
@@ -209,7 +261,8 @@ public class GetImageDialog extends Dialog {
 	 * @param width
 	 * @param height
 	 */
-	public void setOutputImageSize(int width, int height) {
+	public void setOutputImageSize(int width, int height)
+	{
 		mOutputX = width;
 		mOutputY = height;
 	}
@@ -219,18 +272,22 @@ public class GetImageDialog extends Dialog {
 	 * 
 	 * @param isCircleImage
 	 */
-	public void setCircleImage(boolean isCircleImage) {
+	public void setCircleImage(boolean isCircleImage)
+	{
 		mIsCircleImage = isCircleImage;
 	}
 
 	/**
 	 * 判断sdcard是否被挂载
 	 */
-	private boolean hasSdcard() {
+	private boolean hasSdcard()
+	{
 		if (Environment.getExternalStorageState().equals(
-				Environment.MEDIA_MOUNTED)) {
+				Environment.MEDIA_MOUNTED))
+		{
 			return true;
-		} else {
+		} else
+		{
 			return false;
 		}
 	}
@@ -240,29 +297,14 @@ public class GetImageDialog extends Dialog {
 	 * 
 	 * @param source
 	 *            图像所在的位图的对象
-	 * @param rect
-	 *            图像的尺寸
 	 * @return
 	 */
-	private static Bitmap createCircleImage(Bitmap source, Rect rect) {
+	private static Bitmap createCircleImage(Bitmap source)
+	{
 		int width = source.getWidth();
 		int canvasW = width; // 画布宽
-		int cropW = 0; // 裁剪宽
 		int drawX = 0; // 位图绘制x坐标
 		int drawY = 0; // 位图绘制y坐标
-		if (null != rect) {
-			cropW = rect.width() - 1;
-			/*
-			 * 当对小图缩小剪裁的时候，bitmap中实际图像的尺寸小于bitmap的尺寸，
-			 * 为避免进行圆形剪裁出现问题，所以得对canvas的大小进行调整
-			 */
-			if (cropW < 160) {
-				canvasW = cropW;
-				// 调整绘制坐标，使bitmap中的图像恰好绘制在canvas中
-				drawX = (cropW - width) / 2;
-				drawY = drawX;
-			}
-		}
 		final Paint paint = new Paint();
 		// 抗锯齿
 		paint.setAntiAlias(true);

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
-import com.lynnchurch.alertdialogdemo.R;
 import com.lynnchurch.getimagedialog.GetImageDialog;
 
 public class MainActivity extends Activity
