@@ -18,7 +18,6 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Bitmap.Config;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -78,15 +77,6 @@ public class GetImageDialog extends Dialog
 		{
 			mLayoutResID = R.layout.layout_getimage_dialog;
 		}
-		if (hasSdcard())
-		{
-			mTempFile = new File(Environment.getExternalStorageDirectory()
-					+ "/image", TEMP_PHOTO_FILE_NAME);
-		} else
-		{
-			mTempFile = new File(mActivity.getFilesDir() + "/image",
-					TEMP_PHOTO_FILE_NAME);
-		}
 		LayoutInflater inflater = LayoutInflater.from(mActivity);
 		View v = inflater.inflate(mLayoutResID, null);
 		Button camera = (Button) v.findViewById(R.id.btn_camera);
@@ -141,10 +131,21 @@ public class GetImageDialog extends Dialog
 	public Bitmap getBitmap(int requestCode, int resultCode, Intent data)
 	{
 		Bitmap bitmap = null;
-		Rect rect = null;
 		if (Activity.RESULT_OK != resultCode)
 		{
 			return null;
+		}
+		if (null == mTempFile)
+		{
+			if (hasSdcard())
+			{
+				mTempFile = new File(Environment.getExternalStorageDirectory()
+						+ "/image", TEMP_PHOTO_FILE_NAME);
+			} else
+			{
+				mTempFile = new File(mActivity.getFilesDir() + "/image",
+						TEMP_PHOTO_FILE_NAME);
+			}
 		}
 		if (requestCode == REQUEST_GALLERY)
 		{
@@ -158,8 +159,6 @@ public class GetImageDialog extends Dialog
 					FileOutputStream fileOutputStream = new FileOutputStream(
 							mTempFile);
 					copyStream(inputStream, fileOutputStream);
-					fileOutputStream.close();
-					inputStream.close();
 				} catch (IOException e)
 				{
 					// TODO Auto-generated catch block
@@ -171,14 +170,9 @@ public class GetImageDialog extends Dialog
 		if (requestCode == REQUEST_CAREMA)
 		{
 			// 从相机返回的数据
-			if (hasSdcard())
-			{
-				crop();
-			} else
-			{
-				Toast.makeText(mActivity, "未找到存储卡，无法存储照片！", Toast.LENGTH_SHORT)
-						.show();
-			}
+			crop();
+			Toast.makeText(mActivity, "未找到存储卡，无法存储照片！", Toast.LENGTH_SHORT)
+					.show();
 		}
 		if (requestCode == REQUEST_CROP)
 		{
@@ -195,9 +189,9 @@ public class GetImageDialog extends Dialog
 				mTempFile.delete();
 				mTempFile = null;
 			}
-			if(mIsCircleImage)
+			if (mIsCircleImage)
 			{
-				bitmap=createCircleImage(bitmap);
+				bitmap = createCircleImage(bitmap);
 			}
 		}
 		return bitmap;
@@ -213,6 +207,8 @@ public class GetImageDialog extends Dialog
 		{
 			output.write(buffer, 0, bytesRead);
 		}
+		input.close();
+		output.close();
 	}
 
 	/*
