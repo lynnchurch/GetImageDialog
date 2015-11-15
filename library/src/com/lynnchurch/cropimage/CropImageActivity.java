@@ -113,7 +113,6 @@ public class CropImageActivity extends MonitoredActivity {
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			mCircleCrop = extras.getBoolean(CIRCLE_CROP);
-
 			if (mCircleCrop) {
 
 				if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
@@ -628,7 +627,7 @@ public class CropImageActivity extends MonitoredActivity {
 
 		if (noStorageText != null) {
 
-			Toast.makeText(activity, noStorageText, 5000).show();
+			Toast.makeText(activity, noStorageText, Toast.LENGTH_LONG).show();
 		}
 	}
 

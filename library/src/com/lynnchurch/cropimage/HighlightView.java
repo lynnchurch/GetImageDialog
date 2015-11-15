@@ -408,7 +408,6 @@ class HighlightView {
 
     public void setup(Matrix m, Rect imageRect, RectF cropRect, boolean circle,
                       boolean maintainAspectRatio) {
-
         if (circle) {
             maintainAspectRatio = true;
         }

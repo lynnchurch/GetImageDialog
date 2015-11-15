@@ -197,10 +197,10 @@ public class GetImageDialog extends Dialog
 				return bitmap;
 			}
 			bitmap = pathToBitmap();
-			if (mIsCircleImage)
-			{
-				bitmap = createCircleImage(bitmap);
-			}
+//			if (mIsCircleImage)
+//			{
+//				bitmap = createCircleImage(bitmap);
+//			}
 		}
 		return bitmap;
 	}
